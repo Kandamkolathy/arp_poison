@@ -1,0 +1,17 @@
+[package]
+name = "rs_arp_poison"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.28", features = ["derive"] }
+netdev = "0.32.0"
+pnet = "0.35.0"
+
+[[bin]]
+name = "rs_arp_poison" 
+path = "src/main.rs"
+
+[lib]
+name = "rs_arp"
+path = "src/lib.rs"
