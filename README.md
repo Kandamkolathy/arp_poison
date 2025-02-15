@@ -9,13 +9,13 @@ Options:
 
 Arguments:
 
-target_ip: IP address of the target 
+- target_ip: IP address of the target 
 
-target_mac: MAC address of the target
+- target_mac: MAC address of the target
 
-gateway_ip: IP address of the gateway on the LAN
+ - gateway_ip: IP address of the gateway on the LAN
 
-gateway_mac: MAC address of the gateway on the LAN
+ - gateway_mac: MAC address of the gateway on the LAN
 
-interface_name: Interface on the host to send and recieve packets on
+ - interface_name: Interface on the host to send and recieve packets on
 
