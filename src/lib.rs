@@ -145,20 +145,30 @@ impl AddressConfig {
                     if ether_packet.get_source() == self.target_mac
                         && ether_packet.get_ethertype() != EtherTypes::Arp
                     {
-                        tx.send_to(
-                            redirect_ether_packet(ether_packet, self.gateway_mac, self.host_mac)
-                                .as_slice(),
-                            None,
-                        );
+                        tx.build_and_send(1, ether_packet.packet().len(), &mut |new_packet| {
+                            let mut new_packet = MutableEthernetPacket::new(new_packet).unwrap();
+
+                            // Create a clone of the original packet
+                            new_packet.clone_from(&ether_packet);
+
+                            // Switch the source and destination
+                            new_packet.set_source(self.host_mac);
+                            new_packet.set_destination(self.gateway_mac);
+                        });
                     } else if ether_packet.get_source() == self.gateway_mac
                         && ip_packet.get_destination() == self.target_ip
                         && ether_packet.get_ethertype() != EtherTypes::Arp
                     {
-                        tx.send_to(
-                            redirect_ether_packet(ether_packet, self.target_mac, self.host_mac)
-                                .as_slice(),
-                            None,
-                        );
+                        tx.build_and_send(1, ether_packet.packet().len(), &mut |new_packet| {
+                            let mut new_packet = MutableEthernetPacket::new(new_packet).unwrap();
+
+                            // Create a clone of the original packet
+                            new_packet.clone_from(&ether_packet);
+
+                            // Switch the source and destination
+                            new_packet.set_source(self.host_mac);
+                            new_packet.set_destination(self.target_mac);
+                        });
                     }
                 }
                 Err(e) => {
@@ -169,17 +179,17 @@ impl AddressConfig {
     }
 }
 
-fn redirect_ether_packet(
-    ether_packet: EthernetPacket,
-    dest_mac: MacAddr,
-    src_mac: MacAddr,
-) -> Vec<u8> {
-    let mut ethernet_buffer = [0u8; 60];
-    let mut new_packet = MutableEthernetPacket::new(&mut ethernet_buffer).unwrap();
-    new_packet.clone_from(&ether_packet);
-
-    new_packet.set_destination(dest_mac);
-    new_packet.set_source(src_mac);
-
-    return new_packet.packet().to_vec();
-}
+//fn redirect_ether_packet(
+//    ether_packet: EthernetPacket,
+//    dest_mac: MacAddr,
+//    src_mac: MacAddr,
+//) -> Vec<u8> {
+//    let mut ethernet_buffer = [0u8; 1518];
+//    let mut new_packet = MutableEthernetPacket::new(&mut ethernet_buffer).unwrap();
+//    new_packet.clone_from(&ether_packet);
+//
+//    new_packet.set_destination(dest_mac);
+//    new_packet.set_source(src_mac);
+//
+//    return new_packet.packet().to_vec();
+//}
